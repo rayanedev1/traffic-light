@@ -14,7 +14,7 @@ This project goes beyond simple LED manipulation. It is a real-world simulation 
 ### 📋 Pin Configuration Table
 | Component | Arduino Pin | Resistor | Logic Function |
 | :--- | :--- | :--- | :--- |
-| 🔴 **Red LED** | `PIN 6` | 200 Ω | State: STOP (Strict Halt) |
+| 🔴 **Red LED** | `PIN 5` | 200 Ω | State: STOP (Strict Halt) |
 | 🟡 **Yellow LED** | `PIN 4` | 200 Ω | State: CAUTION (Transition/Alert) |
 | 🟢 **Green LED** | `PIN 3` | 200 Ω | State: GO (Free Flow) |
 | **Ground (GND)** | `GND` | — | Common Current Return |
