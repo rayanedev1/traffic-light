@@ -48,7 +48,7 @@ The program executes an infinite loop simulating reality:
 
 * **Flow Phase (GREEN):** Passage authorized. Pin 3 is activated. Others are forced to `LOW` to avoid any contradictory signals. **(Duration: 5000ms)**
 * **Prevention Phase (YELLOW):** This is the most critical phase. It warns of an imminent change to allow for a progressive stop and prevent rear-end collisions. **(Duration: 2000ms)**
-* **Safety Phase (RED):** Total stop. Pin 6 is active. This phase is calibrated to allow time for intersections to clear completely before the next cycle. **(Duration: 5000ms)**
+* **Safety Phase (RED):** Total stop. Pin 5 is active. This phase is calibrated to allow time for intersections to clear completely before the next cycle. **(Duration: 5000ms)**
 
 ---
 
