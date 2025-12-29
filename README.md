@@ -41,7 +41,7 @@ The program is structured as a **Finite State Machine (FSM)**. The code follows 
 
 
 ### 1. Technical Initialization (`void setup()`)
-Upon startup, the microcontroller defines pins 3, 4, and 6 as `OUTPUT`. This means the Arduino will act as a voltage source to control external components. For safety reasons, all LEDs are set to "off" by default at launch.
+Upon startup, the microcontroller defines pins 3, 4, and 5 as `OUTPUT`. This means the Arduino will act as a voltage source to control external components. For safety reasons, all LEDs are set to "off" by default at launch.
 
 ### 2. Traffic Cycle Algorithm (`void loop()`)
 The program executes an infinite loop simulating reality:
