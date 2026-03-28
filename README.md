@@ -1,82 +1,86 @@
-# 🧠 Système de Jeu de Mémoire Interactif (Arduino Simon Says)
+# 🚦 Smart Traffic Light System (Arduino Uno Implementation)
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=4285f4&height=220&section=header&text=SIMON%20SAYS%20ENGINEERING&fontSize=45&animation=fadeIn" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=ea4335&height=220&section=header&text=TRAFFIC%20LIGHT%20EXPLAINED&fontSize=50&animation=fadeIn" width="100%" />
 </p>
 
-## 📖 Introduction & Objectifs
-Ce projet est une implémentation avancée d'un **système de test cognitif** basé sur microcontrôleur. L'objectif est de créer une boucle d'interaction Homme-Machine (IHM) où l'Arduino gère simultanément des sorties visuelles (LEDs), sonores (Buzzer) et des entrées utilisateur (Boutons) pour tester la mémoire à court terme.
+## 📖 Introduction & Objectives
+This project goes beyond simple LED manipulation. It is a real-world simulation of an **urban control system**. The objective is to program a microcontroller to manage traffic flows while ensuring user safety through strict temporal transitions and total hardware reliability.
 
 ---
 
-## 🛠️ Architecture Matérielle (Hardware)
+## 🛠️ Hardware Architecture
 
-### 📋 Tableau de Configuration des Broches (Pins)
-| Composant | Broche Arduino | Résistance | Fonction Logique |
+### 📋 Pin Configuration Table
+| Component | Arduino Pin | Resistor | Logic Function |
 | :--- | :--- | :--- | :--- |
-| 🟢 **LED Verte** | `PIN 2` | 200 Ω | Signal Visuel 1 |
-| 🔵 **LED Bleue** | `PIN 3` | 200 Ω | Signal Visuel 2 |
-| 🟡 **LED Jaune** | `PIN 4` | 200 Ω | Signal Visuel 3 |
-| 🔴 **LED Rouge** | `PIN 5` | 200 Ω | Signal Visuel 4 |
-| 🔘 **4 Boutons** | `PINS 10-13` | Interne | Entrées de capture (INPUT_PULLUP) |
-| 🔊 **Buzzer** | `PIN 9` | — | Retour Audio Multi-fréquence |
+| 🔴 **Red LED** | `PIN 5` | 200 Ω | State: STOP (Strict Halt) |
+| 🟡 **Yellow LED** | `PIN 4` | 200 Ω | State: CAUTION (Transition/Alert) |
+| 🟢 **Green LED** | `PIN 3` | 200 Ω | State: GO (Free Flow) |
+| **Ground (GND)** | `GND` | — | Common Current Return |
 
-### 🔍 Analyses Techniques de l'Assemblage
+### 🔍 In-Depth Assembly Explanations
 
-#### ⚡ Gestion des Entrées : Le mode INPUT_PULLUP
-Contrairement à un montage classique avec résistances externes, ce projet utilise les **résistances de tirage internes** de l'Arduino. 
-* **Logique inversée :** Lorsqu'un bouton est relâché, la pin lit `HIGH` (5V). Lorsqu'il est pressé, il connecte la pin au `GND`, et la lecture devient `LOW`. 
-* **Avantage :** Réduction du nombre de composants sur la breadboard et simplification du câblage.
+#### ⚡ Why 200Ω Resistors?
+From an electronic standpoint, an LED has no significant internal resistance. The Arduino Uno delivers a voltage of **5V** on its digital outputs. Without protection, the current passing through the LED would be too high ($I = V/R$), leading to:
+1. Immediate destruction of the LED due to overheating.
+2. Risk of burning out the microcontroller's output port.
+By adding a **200Ω resistor**, we limit the current to approximately **15-20mA**, which is the ideal nominal value for stable and safe brightness.
 
-#### 🎼 Ingénierie Sonore (Le Buzzer)
-Le buzzer n'émet pas un simple "bip". Chaque LED est associée à une fréquence spécifique (en Hertz) :
-* Le cerveau humain associe plus facilement une **couleur** à une **note de musique**. Cette redondance sensorielle (Vue + Ouïe) améliore l'expérience utilisateur et les scores de mémoire.
 
----
 
-## 🧠 Logique de Développement (Software)
-
-Le programme repose sur une gestion dynamique de tableaux et de générateurs aléatoires.
-
-### 1. Génération de la Séquence (`randomSeed`)
-Pour éviter que le jeu ne produise toujours la même suite de lumières, nous utilisons `randomSeed(analogRead(0))`. Cela utilise le "bruit blanc" (parasites électriques) d'une pin vide pour garantir une séquence réellement différente à chaque démarrage.
-
-### 2. Algorithme de Vérification
-Le système fonctionne selon un cycle rigoureux :
-1.  **Phase d'Apprentissage :** L'Arduino parcourt le tableau `sequence[]` et allume les LEDs correspondantes.
-2.  **Phase d'Écoute :** Le programme entre dans une boucle `while` bloquante, attendant une action sur les pins 10 à 13.
-3.  **Comparaison en Temps Réel :** Chaque appui est immédiatement comparé à l'indice stocké. Une erreur de comparaison déclenche instantanément la fonction `gameOver()`.
+#### 🏗️ Breadboard Structure
+The assembly uses a **common ground rail** (blue line). All short legs of the LEDs (Cathodes) are connected to this rail, which is itself connected to the **GND** pin of the Arduino. This allows the electrical circuit to be closed in a clean and organized manner.
 
 ---
 
-## 🚀 Analyse de Sécurité & Stabilité
-* **Anti-Rebond (Debounce) :** Le code intègre des micro-pauses (`delay(300)`) après chaque appui pour éviter que les vibrations mécaniques du bouton ne soient comptées comme plusieurs appuis.
-* **Évolutivité :** La structure en tableaux permet de passer facilement de 4 à 10 LEDs ou de changer la vitesse du jeu en modifiant une seule variable de délai.
+## 🧠 Software Development Logic
+
+The program is structured as a **Finite State Machine (FSM)**. The code follows a rigorous road safety protocol based on real-world cycles.
+
+
+
+### 1. Technical Initialization (`void setup()`)
+Upon startup, the microcontroller defines pins 3, 4, and 5 as `OUTPUT`. This means the Arduino will act as a voltage source to control external components. For safety reasons, all LEDs are set to "off" by default at launch.
+
+### 2. Traffic Cycle Algorithm (`void loop()`)
+The program executes an infinite loop simulating reality:
+
+* **Flow Phase (GREEN):** Passage authorized. Pin 3 is activated. Others are forced to `LOW` to avoid any contradictory signals. **(Duration: 5000ms)**
+* **Prevention Phase (YELLOW):** This is the most critical phase. It warns of an imminent change to allow for a progressive stop and prevent rear-end collisions. **(Duration: 2000ms)**
+* **Safety Phase (RED):** Total stop. Pin 5 is active. This phase is calibrated to allow time for intersections to clear completely before the next cycle. **(Duration: 5000ms)**
 
 ---
 
-## 🛠️ Guide de Mise en Service
-
-1.  **Câblage :** Connectez les cathodes (pattes courtes) des LEDs au rail bleu (GND).
-2.  **Boutons :** Reliez un côté du bouton à la pin Arduino et l'autre côté directement au rail bleu (GND).
-3.  **Compilation :** Utilisez l'IDE Arduino pour vérifier et téléverser le code C++.
-4.  **Diagnostic :** Si aucune LED ne s'allume, vérifiez l'orientation des LEDs et la continuité de la masse (GND).
+## 🚀 Software Safety Analysis
+* **Non-concurrency:** The code is written so that only one LED is lit at a time, perfectly simulating real-world safety systems where displaying two opposing colors is impossible.
+* **Modularity:** Using constants for pins and delays allows for easy modification of the traffic rhythm (e.g., a longer pedestrian crossing time) by simply changing a value at the top of the script.
 
 ---
 
-## 👨‍💻 Développeur
-**Rayan_Dev** 🇲🇦  
-> "L'ingénierie embarquée au service de l'interaction intelligente."
+## 🛠️ Getting Started Guide
+
+1.  **Assembly:** Reproduce the wiring on the breadboard, respecting the polarity of the LEDs (Long leg to positive).
+2.  **Software:** Use the Arduino IDE (C++ language) to compile the code.
+3.  **Flashing:** Connect the Arduino via USB and upload the program.
+4.  **Testing:** Verify that the sequence matches the standard cycle (Green -> Yellow -> Red).
+
+---
+
+## 👨‍💻 Developer
+**Rayane_Dev** 🇲🇦
+> "Embedded engineering at the service of intelligent automation."
 
 <p align="center">
-  <a href="mailto:votre-email@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail&logoColor=white" /></a>
-  &nbsp;
-  <a href="https://github.com/votre-pseudo"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" /></a>
+  <a href="mailto:rayanedev1@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail&logoColor=white" /></a>
+  &nbsp;
+  <a href="https://discord.gg/rayaneouf"><img src="https://img.shields.io/badge/Discord-7289DA?style=flat-square&logo=discord&logoColor=white" /></a>
 </p>
 
 ---
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=4285f4&height=30&section=footer" width="100%" />
-  <br>
-  <i>Statut du Système : OPÉRATIONNEL | Logique de Mémoire Vérifiée</i>
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=34a853&height=30&section=footer" width="100%" />
+  <br>
+  <i>System Status: OPERATIONAL | Safety Logic Verified</i>
 </p>
+donne moi comme ce designe avec des detaits presize pour les porte et tout en français
